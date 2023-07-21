@@ -18,14 +18,10 @@ resource "aws_instance" "app_server" {
   ami           = "ami-053b0d53c279acc90"
   instance_type = "t2.micro"
   key_name = "ubuntu"
-  user_data = <<-EOF
-                 #!/bin/bash
-		             cd /home/ubuntu
-		             sudo echo "<h1>Feito com Terraform</h1>" > index.html
-		             sudo nohup busybox httpd -f -p 8080 &
-		             EOF
+  user_data = "${file("init.sh")}"
+  user_data_replace_on_change = true
 
   tags = {
-    Name = "SudoTeste"
+    Name = "InitTeste"
   }
 }
