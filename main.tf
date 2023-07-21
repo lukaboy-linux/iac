@@ -18,10 +18,10 @@ resource "aws_instance" "app_server" {
   ami           = "ami-053b0d53c279acc90"
   instance_type = "t2.micro"
   key_name = "ubuntu"
-  user_data = "${file("init.sh")}"
-  user_data_replace_on_change = true
+  # user_data = "${file("init.sh")}"
+  # user_data_replace_on_change = true
 
   tags = {
-    Name = "InitTeste"
+    Name = "TerraAnsible"
   }
 }
