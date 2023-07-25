@@ -21,5 +21,3 @@
       regexp: 'ALLOWED_HOSTS'
       line: 'ALLOWED_HOSTS = ["*"]'
       backrefs: yes
-  - name: Starting project
-    shell: 'cd ~/test; . venv/bin/activate; python manage.py runserver 0.0.0.0:8000 &'
