@@ -11,3 +11,7 @@ crash.log
 crash.*.log
 
 *.pem
+
+IAC-DEV
+IAC-PROD
+*.pub
