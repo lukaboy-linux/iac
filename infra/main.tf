@@ -18,13 +18,14 @@ provider "aws" {
 
 }
 
-resource "aws_instance" "app_server" {
-  ami           = "ami-053b0d53c279acc90"
+# resource "aws_instance" "app_server"
+# ami = "ami-053b0d53c279acc90"
+resource "aws_launch_template" "maquina" {
+  image_id = "ami-053b0d53c279acc90"
   instance_type = var.instancia
   key_name = var.chave
   # user_data = "${file("init.sh")}"
   # user_data_replace_on_change = true
-
   tags = {
     Name = "TerraformAnsiblePython"
   }

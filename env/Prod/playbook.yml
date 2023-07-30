@@ -29,3 +29,5 @@
     shell: '. /home/ubuntu/test/venv/bin/activate; python /home/ubuntu/test/manage.py loaddata clientes.json' 
   - name: initializing server
     shell: '. /home/ubuntu/test/venv/bin/activate; nohup python /home/ubuntu/test/manage.py runserver 0.0.0.0:8000 &'
+    async: 300
+    poll: 0
