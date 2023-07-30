@@ -1,0 +1,40 @@
+cd /home/ubuntu
+curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+sudo python3 get-pip.py
+sudo python3 -m pip install ansible
+tee -a playbook.yml > /dev/null <<EOT
+- hosts: localhost
+  tasks:
+  - name: Install Python3 and Virtualenv
+    apt:
+      pkg:
+      - python3
+      - virtualenv
+      update_cache: yes
+    become: yes
+  - name: Git Clone
+    ansible.builtin.git: 
+      repo: https://github.com/alura-cursos/clientes-leo-api.git
+      dest: /home/ubuntu/test
+      version: master
+      force: yes
+  - name: Install pip dependencies (Django and Django Rest)
+    pip:
+      virtualenv: /home/ubuntu/test/venv
+      requirements: /home/ubuntu/test/requirements.txt
+  - name: Changing host settings
+    lineinfile: 
+      path: /home/ubuntu/test/setup/settings.py
+      regexp: 'ALLOWED_HOSTS'
+      line: 'ALLOWED_HOSTS = ["*"]'
+      backrefs: yes
+  - name: configure DB
+    shell: '. /home/ubuntu/test/venv/bin/activate; python /home/ubuntu/test/manage.py migrate'
+  - name: loading initial data
+    shell: '. /home/ubuntu/test/venv/bin/activate; python /home/ubuntu/test/manage.py loaddata clientes.json' 
+  - name: initializing server
+    shell: '. /home/ubuntu/test/venv/bin/activate; nohup python /home/ubuntu/test/manage.py runserver 0.0.0.0:8000 &'
+    async: 300
+    poll: 0
+EOT
+ansible-playbook playbook.yml
