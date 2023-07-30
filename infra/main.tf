@@ -13,17 +13,16 @@ provider "aws" {
   region  = var.regiao_aws
 }
 
-# resource "aws_instance" "app_server"
-# ami = "ami-053b0d53c279acc90"
 resource "aws_launch_template" "maquina" {
-  image_id      = "ami-0f8e81a3da6e2510a"
+  # image_id      = "ami-0f8e81a3da6e2510a"
+  image_id      = "ami-03f65b8614a860c29"
   instance_type = var.instancia
   key_name      = var.chave
   tags = {
     Name = "TerraformAnsiblePython"
   }
   security_group_names = [var.grupoDeSeguranca]
-  user_data            = filebase64("ansible.sh")
+  user_data            = var.producao ? filebase64("ansible.sh") : ""
 }
 
 resource "aws_key_pair" "chaveSSH" {
@@ -33,7 +32,7 @@ resource "aws_key_pair" "chaveSSH" {
 }
 
 resource "aws_autoscaling_group" "grupo" {
-  availability_zones = ["${var.regiao_aws}b", "${var.regiao_aws}c"]
+  availability_zones = ["${var.regiao_aws}a", "${var.regiao_aws}b"]
   name               = var.nomeGrupo
   max_size           = var.maximo
   min_size           = var.minimo
@@ -45,11 +44,11 @@ resource "aws_autoscaling_group" "grupo" {
 }
 
 resource "aws_default_subnet" "subnet_1" {
-  availability_zone = "${var.regiao_aws}b"
+  availability_zone = "${var.regiao_aws}a"
 }
 
 resource "aws_default_subnet" "subnet_2" {
-  availability_zone = "${var.regiao_aws}c"
+  availability_zone = "${var.regiao_aws}b"
 }
 
 resource "aws_lb" "loadBalancer" {
