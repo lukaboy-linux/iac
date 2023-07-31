@@ -35,11 +35,32 @@ resource "aws_autoscaling_group" "grupo" {
   name               = var.nomeGrupo
   max_size           = var.maximo
   min_size           = var.minimo
+  desired_capacity   = 1
   target_group_arns  = var.producao ? [aws_lb_target_group.alvoLoadBalancer[0].arn] : []
   launch_template {
     id      = aws_launch_template.maquina.id
     version = "$Latest"
   }
+}
+
+resource "aws_autoscaling_schedule" "liga" {
+  scheduled_action_name  = "liga"
+  min_size               = 0
+  max_size               = 1
+  desired_capacity       = 1
+  start_time             = timeadd(timestamp(), "10m")
+  recurrence             = "0 10 * * MON-FRI"
+  autoscaling_group_name = aws_autoscaling_group.grupo.name
+}
+
+resource "aws_autoscaling_schedule" "desliga" {
+  scheduled_action_name  = "desliga"
+  min_size               = 0
+  max_size               = 1
+  desired_capacity       = 0
+  start_time             = timeadd(timestamp(), "11m")
+  recurrence             = "0 21 * * MON-FRI"
+  autoscaling_group_name = aws_autoscaling_group.grupo.name
 }
 
 resource "aws_default_subnet" "subnet_1" {
